@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>後台管理</title>
+<style>
+table { width:100%; border-collapse: collapse; }
+td,th { border:1px solid #ccc; padding:8px; }
+button { margin:2px; }
+</style>
+</head>
+
+<body>
+
+<h2>訂單管理</h2>
+<table>
+<thead>
+<tr>
+<th>姓名</th>
+<th>房型</th>
+<th>日期</th>
+<th>狀態</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody id="list"></tbody>
+</table>
+
+<script>
+let data = JSON.parse(localStorage.getItem("bookings")||"[]");
+
+// 過期清除
+if(Date.now() > localStorage.getItem("expire")){
+ localStorage.removeItem("bookings");
+ data=[];
+}
+
+// 顯示
+function render(){
+ const html = data.map((d,i)=>`
+  <tr>
+  <td>${d.name}</td>
+  <td>${d.room}</td>
+  <td>${d.date}</td>
+  <td>${d.status}</td>
+  <td>
+   <button onclick="update(${i},'已確認')">核准</button>
+   <button onclick="update(${i},'已取消')">取消</button>
+  </td>
+  </tr>
+ `).join("");
+
+ document.getElementById("list").innerHTML = html;
+}
+
+function update(i,status){
+ data[i].status = status;
+ localStorage.setItem("bookings", JSON.stringify(data));
+ render();
+}
+
+render();
+</script>
+
+</body>
+</html>
+``
